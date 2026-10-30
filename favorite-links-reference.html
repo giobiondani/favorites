@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Favorite Links: Style Reference</title>
+
+  <style>
+    /* ==========================================================
+       Favorite links
+       ----------------------------------------------------------
+       BASE CLASSES
+         .card-1     big card, stacked vertically, large title
+         .card-2     medium card, in a grid inside a .card-1
+         .card-3     small card, inside a .card-2
+         .card-link  an individual link (put it on an <a>)
+
+       Titles are plain headings placed directly inside each card:
+         .card-1 > h2     .card-2 > h3     .card-3 > h4
+
+       MODIFIERS: add them next to a base class (work on all 4
+       base classes unless noted; combine as many as you like)
+
+         Color    red rose pink magenta purple indigo blue sky cyan teal
+                  green lime yellow amber orange brown gray slate
+                  or "tint" plus style="--tint:#ff6600" for any color
+         Fill     solid       filled with the color, white text
+         Size     sm lg xl    scales the element's own text/padding
+                              (not the things inside it)
+         Layout   wide        spans 2 grid columns  (.card-2)
+                  full        spans all grid columns (.card-2)
+         Margin   mt-0 mt-1 mt-2 mt-3    margin-top    (0 / .5 / 1 / 2 rem)
+                  mb-0 mb-1 mb-2 mb-3    margin-bottom
+         Shadow   shadow-sm shadow shadow-lg    small / medium / large drop shadow
+                  shadow-none                   removes the shadow (card-1 has a faint one)
+
+       Examples:
+         <div class="card-2 green wide"> ... </div>
+         <a class="card-link red solid lg" href="...">Link</a>
+         <a class="card-link tint" style="--tint:#ff6600" href="...">Link</a>
+       ========================================================== */
+
+    :root {
+      --page-bg: #f1f3f6;
+      --text: #1c1e21;
+      --muted: #5f6672;
+      --accent: #2563eb;          /* link color */
+      --accent-solid: #2563eb;    /* default fill color for .solid */
+
+      --card-1-bg: #ffffff;
+      --card-2-bg: #f6f7f9;
+      --card-3-bg: #ffffff;
+      --border: #dde1e8;
+
+      --radius: 14px;
+      --gap: 1rem;
+      --shadow-k: 1;              /* shadow strength (raised in dark mode) */
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page-bg: #111317;
+        --text: #e8eaed;
+        --muted: #9aa1ad;
+        --accent: #7aa7ff;
+
+        --card-1-bg: #1a1d23;
+        --card-2-bg: #22262e;
+        --card-3-bg: #2a2f38;
+        --border: #343a45;
+        --shadow-k: 2;
+      }
+    }
+
+    /* Basic page setup (optional, remove if you already style these) */
+    body {
+      max-width: 1700px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.4;
+    }
+
+    /* ==========================================================
+       Per-element settings. Each element starts neutral (no tint)
+       and the modifiers further down change these values, so a
+       colored card never colors the cards inside it.
+         --tint   the color            --k       1 = tinted, 0 = not
+         --s      size scale           --tint-fg readable text version of the tint
+       ========================================================== */
+    .card-1, .card-2, .card-3, .card-link {
+      --tint: var(--accent-solid);
+      --tint-fg: color-mix(in srgb, var(--tint) 70%, var(--text));
+      --k: 0;
+      --bg-mix: 14%;
+      --border-mix: 45%;
+      --s: 1;
+    }
+
+    /* dark mode: lighten tinted text so every color keeps good contrast (WCAG AA) */
+    @media (prefers-color-scheme: dark) {
+      .card-1, .card-2, .card-3, .card-link {
+        --tint-fg: color-mix(in srgb, var(--tint) 45%, var(--text));
+      }
+    }
+
+    /* ---------- Level 1: big cards, stacked vertically ---------- */
+    .card-1 {
+      --surface: var(--card-1-bg);
+      display: grid;                                   /* its .card-2 children form a grid */
+      grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+      gap: var(--gap);
+      align-items: start;
+      margin-bottom: 1.75rem;                          /* vertical spacing between level-1 cards */
+      padding: calc(1.5rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+    }
+
+    .card-1 > h2 {
+      grid-column: 1 / -1;                             /* title spans the full width */
+      margin: 0 0 0.25rem;
+      font-size: calc(2rem * var(--s));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--text));
+    }
+
+    /* ---------- Level 2: medium cards, in a grid ---------- */
+    .card-2 {
+      --surface: var(--card-2-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: calc(1.1rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: var(--radius);
+    }
+
+    .card-2 > h3 {
+      margin: 0;
+      font-size: calc(1.25rem * var(--s));
+      font-weight: 600;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--text));
+    }
+
+    /* ---------- Level 3: small cards ---------- */
+    .card-3 {
+      --surface: var(--card-3-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: calc(0.75rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .card-3 > h4 {
+      margin: 0 0 0.3rem;
+      font-size: calc(0.8rem * var(--s));
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--muted));
+    }
+
+    /* ---------- Individual links ---------- */
+    .card-link {
+      --bg-mix: 10%;
+      display: block;
+      padding: calc(0.35rem * var(--s)) calc(0.5rem * var(--s));
+      border-radius: 8px;
+      font-size: calc(1rem * var(--s));
+      font-weight: calc(400 + var(--k) * 200);         /* tinted links are semi-bold */
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--accent));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), transparent);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      transition: background-color 0.15s ease;
+    }
+
+    .card-link:hover {
+      background: color-mix(in srgb, var(--tint) 20%, transparent);
+      text-decoration: underline;
+    }
+
+    .card-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================
+       MODIFIERS (keep below the base classes)
+       ========================================================== */
+
+    /* ---------- Colors ---------- */
+    .red     { --tint: #dc2626; --k: 1; }
+    .rose    { --tint: #e11d48; --k: 1; }
+    .pink    { --tint: #db2777; --k: 1; }
+    .magenta { --tint: #a21caf; --k: 1; }
+    .purple  { --tint: #7c3aed; --k: 1; }
+    .indigo  { --tint: #4338ca; --k: 1; }
+    .blue    { --tint: #2563eb; --k: 1; }
+    .sky     { --tint: #0369a1; --k: 1; }
+    .cyan    { --tint: #0e7490; --k: 1; }
+    .teal    { --tint: #0f766e; --k: 1; }
+    .green   { --tint: #15803d; --k: 1; }
+    .lime    { --tint: #4d7c0f; --k: 1; }
+    .yellow  { --tint: #a16207; --k: 1; }
+    .amber   { --tint: #b45309; --k: 1; }
+    .orange  { --tint: #c2410c; --k: 1; }
+    .brown   { --tint: #78350f; --k: 1; }
+    .gray    { --tint: #6b7280; --k: 1; }
+    .slate   { --tint: #475569; --k: 1; }
+    .tint    { --k: 1; }                                /* use with style="--tint:#rrggbb" */
+
+    /* ---------- Solid fill (white text) ---------- */
+    .solid {
+      --k: 1;
+      --bg-mix: 100%;
+      --border-mix: 100%;
+    }
+
+    .solid > h2,
+    .solid > h3,
+    .solid > h4 {
+      color: #fff;
+    }
+
+    .card-link.solid {
+      color: #fff;
+    }
+
+    .card-link.solid:hover {
+      background: color-mix(in srgb, var(--tint) 85%, black);
+      text-decoration: none;
+    }
+
+    /* plain links inside a solid card turn white so they stay readable */
+    .solid > .card-link:not(.solid) {
+      color: #fff;
+    }
+
+    .solid > .card-link:not(.solid):hover {
+      background: rgb(255 255 255 / 0.2);
+    }
+
+    /* ---------- Sizes ---------- */
+    .sm { --s: 0.85; }
+    .lg { --s: 1.25; }
+    .xl { --s: 1.5; }
+
+    /* ---------- Grid layout (for .card-2 inside .card-1) ---------- */
+    .full { grid-column: 1 / -1; }
+
+    @media (min-width: 720px) {
+      .wide { grid-column: span 2; }
+    }
+
+    /* ---------- Margins ---------- */
+    .mt-0 { margin-top: 0; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 2rem; }
+
+    .mb-0 { margin-bottom: 0; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 2rem; }
+
+    /* ---------- Shadows ---------- */
+    .shadow-none { box-shadow: none; }
+    .shadow-sm   { box-shadow: 0 2px 6px  rgb(0 0 0 / calc(0.12 * var(--shadow-k))); }
+    .shadow      { box-shadow: 0 8px 24px rgb(0 0 0 / calc(0.22 * var(--shadow-k))); }
+    .shadow-lg   { box-shadow: 0 18px 48px rgb(0 0 0 / calc(0.32 * var(--shadow-k))); }
+
+    /* ==========================================================
+       Reference-page-only styles (NOT part of favorite-links.css)
+       ========================================================== */
+    .ref-header { margin: 0 0 1.75rem; }
+    .ref-header h1 { margin: 0 0 0.5rem; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+    .ref-header p { margin: 0 0 1rem; max-width: 72ch; color: var(--muted); }
+    .ref-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .ref-nav .card-link { display: inline-block; }
+    .card-1[id] { scroll-margin-top: 1rem; }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      padding: 0.1em 0.35em;
+      border-radius: 5px;
+      white-space: nowrap;                       /* never break a class name across lines */
+      background: color-mix(in srgb, currentColor 10%, transparent);
+    }
+    .ref-note { margin: 0; font-size: 0.92rem; line-height: 1.55; color: var(--muted); }
+    .ref-note strong { color: var(--text); }
+    .card-1 > .ref-note { grid-column: 1 / -1; margin-bottom: 0.25rem; max-width: 80ch; }
+    .card-3 > .ref-note { padding: 0.25rem 0.5rem; }
+    .ref-pre {
+      margin: 0; padding: 0.8rem 1rem; overflow-x: auto;
+      font-size: 0.82rem; line-height: 1.55; border-radius: 8px;
+      background: color-mix(in srgb, var(--text) 6%, transparent);
+    }
+    .ref-pre code { padding: 0; background: none; font-size: inherit; white-space: pre; }
+
+    /* Hatched stripes make the empty space (margins and gaps) visible */
+    .ref-stack {
+      display: flex; flex-direction: column; gap: 0.75rem; border-radius: 10px;
+      background: repeating-linear-gradient(135deg,
+        color-mix(in srgb, var(--text) 16%, transparent) 0 2px, transparent 2px 8px);
+    }
+    .ref-stack.flush { gap: 0; }
+  </style>
+</head>
+<body>
+
+  <header class="ref-header">
+    <h1>Favorite links: style reference</h1>
+    <p>Every base class and modifier on one page. Each example is labeled with the classes it uses, so you can copy them straight into your own cards and links. Colors follow your system's light or dark setting.</p>
+    <nav class="ref-nav">
+      <a class="card-link" href="#how">How it works</a><a class="card-link" href="#colors">Colors</a><a class="card-link" href="#custom">Any color</a><a class="card-link" href="#sizes">Sizes</a><a class="card-link" href="#shadows">Shadows</a><a class="card-link" href="#margins">Margins</a><a class="card-link" href="#grid-margins">Margins in a grid</a><a class="card-link" href="#layout">Grid span</a><a class="card-link" href="#card1">card-1 variants</a>
+    </nav>
+  </header>
+
+  <div class="card-1" id="how">
+    <h2>How it works</h2>
+    <p class="ref-note">Every element gets one base class. Add modifier classes next to it to change color, size, spacing or shadow. Modifiers combine freely and only affect the element they are on, never the cards or links inside it.</p>
+
+    <div class="card-2">
+      <h3>Base classes</h3>
+      <div class="card-3">
+        <h4>Structure</h4>
+        <p class="ref-note"><code>card-1</code> Top-level card. Cards stack vertically. Title is an <code>&lt;h2&gt;</code>.</p>
+        <p class="ref-note"><code>card-2</code> Medium card in a grid inside a card-1. Title is an <code>&lt;h3&gt;</code>.</p>
+        <p class="ref-note"><code>card-3</code> Small card inside a card-2. Title is an <code>&lt;h4&gt;</code>.</p>
+        <p class="ref-note"><code>card-link</code> One link. Goes on an <code>&lt;a&gt;</code>.</p>
+      </div>
+    </div>
+
+    <div class="card-2">
+      <h3>Modifiers</h3>
+      <div class="card-3">
+        <h4>Combine freely</h4>
+        <p class="ref-note"><strong>Color</strong> <code>red</code> <code>rose</code> <code>pink</code> <code>magenta</code> <code>purple</code> <code>indigo</code> <code>blue</code> <code>sky</code> <code>cyan</code> <code>teal</code> <code>green</code> <code>lime</code> <code>yellow</code> <code>amber</code> <code>orange</code> <code>brown</code> <code>gray</code> <code>slate</code> or <code>tint</code></p>
+        <p class="ref-note"><strong>Fill</strong> <code>solid</code></p>
+        <p class="ref-note"><strong>Size</strong> <code>sm</code> <code>lg</code> <code>xl</code></p>
+        <p class="ref-note"><strong>Grid span</strong> <code>wide</code> <code>full</code> (on a card-2)</p>
+        <p class="ref-note"><strong>Margin</strong> <code>mt-0</code> to <code>mt-3</code>, <code>mb-0</code> to <code>mb-3</code></p>
+        <p class="ref-note"><strong>Shadow</strong> <code>shadow-none</code> <code>shadow-sm</code> <code>shadow</code> <code>shadow-lg</code></p>
+      </div>
+    </div>
+
+    <div class="card-2 wide">
+      <h3>Example markup</h3>
+      <pre class="ref-pre"><code>&lt;div class="card-2 teal shadow"&gt;
+  &lt;h3&gt;Reading&lt;/h3&gt;
+  &lt;div class="card-3"&gt;
+    &lt;h4&gt;News&lt;/h4&gt;
+    &lt;a class="card-link" href="https://news.ycombinator.com"&gt;Hacker News&lt;/a&gt;
+    &lt;a class="card-link solid red lg" href="https://lobste.rs"&gt;Lobsters&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <div class="card-2 teal shadow">
+      <h3>Reading</h3>
+      <div class="card-3">
+        <h4>News</h4>
+        <a class="card-link" href="#">Hacker News</a>
+        <a class="card-link solid red lg" href="#">Lobsters</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="colors">
+    <h2>Colors</h2>
+    <p class="ref-note">Add a color name next to any base class. Cards get a tinted background, border and title; links get colored text on a light background. Add <code>solid</code> for a filled look with white text. The card titles below use the plain card-2 color; the inner cards and links show the other combinations.</p>
+    <div class="card-2 red">
+      <h3>red</h3>
+      <div class="card-3 red">
+        <h4>card-3 red</h4>
+        <a class="card-link red" href="#">card-link red</a>
+        <a class="card-link solid red" href="#">card-link solid red</a>
+      </div>
+      <div class="card-3 solid red">
+        <h4>card-3 solid red</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 rose">
+      <h3>rose</h3>
+      <div class="card-3 rose">
+        <h4>card-3 rose</h4>
+        <a class="card-link rose" href="#">card-link rose</a>
+        <a class="card-link solid rose" href="#">card-link solid rose</a>
+      </div>
+      <div class="card-3 solid rose">
+        <h4>card-3 solid rose</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 pink">
+      <h3>pink</h3>
+      <div class="card-3 pink">
+        <h4>card-3 pink</h4>
+        <a class="card-link pink" href="#">card-link pink</a>
+        <a class="card-link solid pink" href="#">card-link solid pink</a>
+      </div>
+      <div class="card-3 solid pink">
+        <h4>card-3 solid pink</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 magenta">
+      <h3>magenta</h3>
+      <div class="card-3 magenta">
+        <h4>card-3 magenta</h4>
+        <a class="card-link magenta" href="#">card-link magenta</a>
+        <a class="card-link solid magenta" href="#">card-link solid magenta</a>
+      </div>
+      <div class="card-3 solid magenta">
+        <h4>card-3 solid magenta</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 purple">
+      <h3>purple</h3>
+      <div class="card-3 purple">
+        <h4>card-3 purple</h4>
+        <a class="card-link purple" href="#">card-link purple</a>
+        <a class="card-link solid purple" href="#">card-link solid purple</a>
+      </div>
+      <div class="card-3 solid purple">
+        <h4>card-3 solid purple</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 indigo">
+      <h3>indigo</h3>
+      <div class="card-3 indigo">
+        <h4>card-3 indigo</h4>
+        <a class="card-link indigo" href="#">card-link indigo</a>
+        <a class="card-link solid indigo" href="#">card-link solid indigo</a>
+      </div>
+      <div class="card-3 solid indigo">
+        <h4>card-3 solid indigo</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 blue">
+      <h3>blue</h3>
+      <div class="card-3 blue">
+        <h4>card-3 blue</h4>
+        <a class="card-link blue" href="#">card-link blue</a>
+        <a class="card-link solid blue" href="#">card-link solid blue</a>
+      </div>
+      <div class="card-3 solid blue">
+        <h4>card-3 solid blue</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 sky">
+      <h3>sky</h3>
+      <div class="card-3 sky">
+        <h4>card-3 sky</h4>
+        <a class="card-link sky" href="#">card-link sky</a>
+        <a class="card-link solid sky" href="#">card-link solid sky</a>
+      </div>
+      <div class="card-3 solid sky">
+        <h4>card-3 solid sky</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 cyan">
+      <h3>cyan</h3>
+      <div class="card-3 cyan">
+        <h4>card-3 cyan</h4>
+        <a class="card-link cyan" href="#">card-link cyan</a>
+        <a class="card-link solid cyan" href="#">card-link solid cyan</a>
+      </div>
+      <div class="card-3 solid cyan">
+        <h4>card-3 solid cyan</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 teal">
+      <h3>teal</h3>
+      <div class="card-3 teal">
+        <h4>card-3 teal</h4>
+        <a class="card-link teal" href="#">card-link teal</a>
+        <a class="card-link solid teal" href="#">card-link solid teal</a>
+      </div>
+      <div class="card-3 solid teal">
+        <h4>card-3 solid teal</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 green">
+      <h3>green</h3>
+      <div class="card-3 green">
+        <h4>card-3 green</h4>
+        <a class="card-link green" href="#">card-link green</a>
+        <a class="card-link solid green" href="#">card-link solid green</a>
+      </div>
+      <div class="card-3 solid green">
+        <h4>card-3 solid green</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 lime">
+      <h3>lime</h3>
+      <div class="card-3 lime">
+        <h4>card-3 lime</h4>
+        <a class="card-link lime" href="#">card-link lime</a>
+        <a class="card-link solid lime" href="#">card-link solid lime</a>
+      </div>
+      <div class="card-3 solid lime">
+        <h4>card-3 solid lime</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 yellow">
+      <h3>yellow</h3>
+      <div class="card-3 yellow">
+        <h4>card-3 yellow</h4>
+        <a class="card-link yellow" href="#">card-link yellow</a>
+        <a class="card-link solid yellow" href="#">card-link solid yellow</a>
+      </div>
+      <div class="card-3 solid yellow">
+        <h4>card-3 solid yellow</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 amber">
+      <h3>amber</h3>
+      <div class="card-3 amber">
+        <h4>card-3 amber</h4>
+        <a class="card-link amber" href="#">card-link amber</a>
+        <a class="card-link solid amber" href="#">card-link solid amber</a>
+      </div>
+      <div class="card-3 solid amber">
+        <h4>card-3 solid amber</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 orange">
+      <h3>orange</h3>
+      <div class="card-3 orange">
+        <h4>card-3 orange</h4>
+        <a class="card-link orange" href="#">card-link orange</a>
+        <a class="card-link solid orange" href="#">card-link solid orange</a>
+      </div>
+      <div class="card-3 solid orange">
+        <h4>card-3 solid orange</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 brown">
+      <h3>brown</h3>
+      <div class="card-3 brown">
+        <h4>card-3 brown</h4>
+        <a class="card-link brown" href="#">card-link brown</a>
+        <a class="card-link solid brown" href="#">card-link solid brown</a>
+      </div>
+      <div class="card-3 solid brown">
+        <h4>card-3 solid brown</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 gray">
+      <h3>gray</h3>
+      <div class="card-3 gray">
+        <h4>card-3 gray</h4>
+        <a class="card-link gray" href="#">card-link gray</a>
+        <a class="card-link solid gray" href="#">card-link solid gray</a>
+      </div>
+      <div class="card-3 solid gray">
+        <h4>card-3 solid gray</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div><div class="card-2 slate">
+      <h3>slate</h3>
+      <div class="card-3 slate">
+        <h4>card-3 slate</h4>
+        <a class="card-link slate" href="#">card-link slate</a>
+        <a class="card-link solid slate" href="#">card-link solid slate</a>
+      </div>
+      <div class="card-3 solid slate">
+        <h4>card-3 solid slate</h4>
+        <a class="card-link" href="#">plain card-link inside</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="custom">
+    <h2>Any color</h2>
+    <p class="ref-note">Need a color that is not in the list? Add <code>tint</code> and set <code>--tint</code> in an inline style. It works on all four base classes and combines with <code>solid</code>.</p>
+    <div class="card-2 tint" style="--tint:#ff6600">
+      <h3>#ff6600</h3>
+      <div class="card-3 tint" style="--tint:#ff6600">
+        <h4>card-3 tint</h4>
+        <a class="card-link tint" href="#" style="--tint:#ff6600">card-link tint</a>
+        <a class="card-link solid tint" href="#" style="--tint:#ff6600">card-link solid tint</a>
+      </div>
+      <div class="card-3">
+        <h4>Markup</h4>
+        <p class="ref-note"><code>class="card-2 tint"</code><br><code>style="--tint:#ff6600"</code></p>
+      </div>
+    </div><div class="card-2 tint" style="--tint:#0a8f6a">
+      <h3>#0a8f6a</h3>
+      <div class="card-3 tint" style="--tint:#0a8f6a">
+        <h4>card-3 tint</h4>
+        <a class="card-link tint" href="#" style="--tint:#0a8f6a">card-link tint</a>
+        <a class="card-link solid tint" href="#" style="--tint:#0a8f6a">card-link solid tint</a>
+      </div>
+      <div class="card-3">
+        <h4>Markup</h4>
+        <p class="ref-note"><code>class="card-2 tint"</code><br><code>style="--tint:#0a8f6a"</code></p>
+      </div>
+    </div><div class="card-2 tint" style="--tint:#8b5cf6">
+      <h3>#8b5cf6</h3>
+      <div class="card-3 tint" style="--tint:#8b5cf6">
+        <h4>card-3 tint</h4>
+        <a class="card-link tint" href="#" style="--tint:#8b5cf6">card-link tint</a>
+        <a class="card-link solid tint" href="#" style="--tint:#8b5cf6">card-link solid tint</a>
+      </div>
+      <div class="card-3">
+        <h4>Markup</h4>
+        <p class="ref-note"><code>class="card-2 tint"</code><br><code>style="--tint:#8b5cf6"</code></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="sizes">
+    <h2>Sizes</h2>
+    <p class="ref-note"><code>sm</code>, <code>lg</code> and <code>xl</code> scale the element's own title, text and padding. Whatever is inside it stays the same size, so set the size on each element you want changed.</p>
+    <div class="card-2 sm">
+      <h3>card-2 sm</h3>
+      <div class="card-3">
+        <h4>Inside stays normal</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2">
+      <h3>card-2</h3>
+      <div class="card-3">
+        <h4>Inside stays normal</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 lg">
+      <h3>card-2 lg</h3>
+      <div class="card-3">
+        <h4>Inside stays normal</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 xl">
+      <h3>card-2 xl</h3>
+      <div class="card-3">
+        <h4>Inside stays normal</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>card-3 sizes</h3>
+      <div class="card-3 sm">
+        <h4>card-3 sm</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+      <div class="card-3">
+        <h4>card-3</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+      <div class="card-3 lg">
+        <h4>card-3 lg</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+      <div class="card-3 xl">
+        <h4>card-3 xl</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>card-link sizes</h3>
+      <div class="card-3">
+        <h4>card-link</h4>
+        <a class="card-link sm" href="#">sm</a>
+        <a class="card-link" href="#">normal (no class)</a>
+        <a class="card-link lg" href="#">lg</a>
+        <a class="card-link xl" href="#">xl</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="shadows">
+    <h2>Shadows</h2>
+    <p class="ref-note">Shadows work on every element. A card-1 has a faint shadow by default; card-2, card-3 and links have none. Use <code>shadow-none</code> to remove the faint one from a card-1.</p>
+    <div class="card-2">
+      <h3>no class</h3>
+      <div class="card-3">
+        <h4>card-2 default</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 shadow-sm">
+      <h3>shadow-sm</h3>
+      <div class="card-3">
+        <h4>small</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 shadow">
+      <h3>shadow</h3>
+      <div class="card-3">
+        <h4>medium</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 shadow-lg">
+      <h3>shadow-lg</h3>
+      <div class="card-3">
+        <h4>large</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>card-3 shadows</h3>
+      <div class="card-3">
+        <h4>card-3 default</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+      <div class="card-3 shadow-sm">
+        <h4>card-3 shadow-sm</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+      <div class="card-3 shadow">
+        <h4>card-3 shadow</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>card-link shadows</h3>
+      <div class="card-3">
+        <h4>card-link</h4>
+        <a class="card-link solid blue" href="#">default</a>
+        <a class="card-link solid blue mt-1 shadow-sm" href="#">mt-1 shadow-sm</a>
+        <a class="card-link solid blue mt-1 shadow" href="#">mt-1 shadow</a>
+      </div>
+    </div>
+    <div class="card-2 solid indigo shadow-lg">
+      <h3>solid indigo shadow-lg</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 teal shadow">
+      <h3>teal shadow</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div><div class="card-2 orange shadow-sm">
+      <h3>orange shadow-sm</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">card-link</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="margins">
+    <h2>Margins</h2>
+    <p class="ref-note">The hatched stripes show the empty space between cards. Margin classes add to the normal spacing (0.75rem between items inside a card-2). <code>mt</code> is margin-top and <code>mb</code> is margin-bottom. The numbers 0, 1, 2 and 3 mean 0, 0.5, 1 and 2 rem.</p>
+    <div class="card-2">
+      <h3>margin-top</h3>
+      <div class="ref-stack">
+        <div class="card-3">
+        <h4>no class</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3 mt-1">
+        <h4>mt-1 · +0.5rem</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3 mt-2">
+        <h4>mt-2 · +1rem</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3 mt-3">
+        <h4>mt-3 · +2rem</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>margin-bottom</h3>
+      <div class="ref-stack">
+        <div class="card-3">
+        <h4>no class</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3 mb-1">
+        <h4>mb-1 · +0.5rem</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3 mb-2">
+        <h4>mb-2 · +1rem</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3 mb-3">
+        <h4>mb-3 · +2rem</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+        <div class="card-3">
+        <h4>next card</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+      </div>
+    </div>
+    <div class="card-2 wide">
+      <h3>margin-bottom on a card-1</h3>
+      <p class="ref-note">A card-1 has 1.75rem below it by default. Use <code>mb-0</code> to <code>mb-3</code> on a card-1 to change the space before the next one.</p>
+      <div class="ref-stack flush">
+        <div class="card-1 sm"><h2>default · 1.75rem</h2></div>
+        <div class="card-1 sm mb-0"><h2>mb-0 · 0</h2></div>
+        <div class="card-1 sm mb-1"><h2>mb-1 · 0.5rem</h2></div>
+        <div class="card-1 sm mb-2"><h2>mb-2 · 1rem</h2></div>
+        <div class="card-1 sm mb-3"><h2>mb-3 · 2rem</h2></div>
+        <div class="card-1 sm mb-0"><h2>next card-1</h2></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="grid-margins">
+    <h2>Margins in a grid</h2>
+    <p class="ref-note">On a card-2, a margin moves the card down within its grid cell. Useful for staggering cards or pushing one lower than its neighbors.</p>
+    <div class="card-2">
+      <h3>no class</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div><div class="card-2 mt-1">
+      <h3>mt-1 · 0.5rem</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div><div class="card-2 mt-2">
+      <h3>mt-2 · 1rem</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div><div class="card-2 mt-3">
+      <h3>mt-3 · 2rem</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="layout">
+    <h2>Grid span</h2>
+    <p class="ref-note">Put <code>wide</code> (spans 2 columns, on screens 720px and wider) or <code>full</code> (spans every column) on a card-2 inside a card-1.</p>
+    <div class="card-2">
+      <h3>default</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+    <div class="card-2 blue wide">
+      <h3>blue wide</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>default</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+    <div class="card-2 green full">
+      <h3>green full</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>default</h3>
+      <div class="card-3">
+        <h4>Example</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1 teal" id="card1">
+    <h2>card-1 teal</h2>
+    <div class="card-2">
+      <h3>Frontend</h3>
+      <div class="card-3">
+        <h4>CSS</h4>
+        <a class="card-link" href="#">MDN: CSS</a>
+        <a class="card-link" href="#">CSS-Tricks</a>
+      </div><div class="card-3">
+        <h4>JavaScript</h4>
+        <a class="card-link" href="#">javascript.info</a>
+      </div>
+    </div>
+    <div class="card-2 blue">
+      <h3>Backend</h3>
+      <div class="card-3">
+        <h4>Python</h4>
+        <a class="card-link" href="#">Python docs</a>
+        <a class="card-link" href="#">PyPI</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1 solid indigo">
+    <h2>card-1 solid indigo</h2>
+    <div class="card-2">
+      <h3>Frontend</h3>
+      <div class="card-3">
+        <h4>CSS</h4>
+        <a class="card-link" href="#">MDN: CSS</a>
+        <a class="card-link" href="#">CSS-Tricks</a>
+      </div><div class="card-3">
+        <h4>JavaScript</h4>
+        <a class="card-link" href="#">javascript.info</a>
+      </div>
+    </div>
+    <div class="card-2 blue">
+      <h3>Backend</h3>
+      <div class="card-3">
+        <h4>Python</h4>
+        <a class="card-link" href="#">Python docs</a>
+        <a class="card-link" href="#">PyPI</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1 lg orange shadow-lg">
+    <h2>card-1 lg orange shadow-lg</h2>
+    <div class="card-2">
+      <h3>Frontend</h3>
+      <div class="card-3">
+        <h4>CSS</h4>
+        <a class="card-link" href="#">MDN: CSS</a>
+        <a class="card-link" href="#">CSS-Tricks</a>
+      </div><div class="card-3">
+        <h4>JavaScript</h4>
+        <a class="card-link" href="#">javascript.info</a>
+      </div>
+    </div>
+    <div class="card-2 blue">
+      <h3>Backend</h3>
+      <div class="card-3">
+        <h4>Python</h4>
+        <a class="card-link" href="#">Python docs</a>
+        <a class="card-link" href="#">PyPI</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Demo links point to "#": keep them from jumping to the top of the page
+    document.addEventListener('click', function (ev) {
+      var a = ev.target.closest('a[href="#"]');
+      if (a) ev.preventDefault();
+    });
+  </script>
+</body>
+</html>

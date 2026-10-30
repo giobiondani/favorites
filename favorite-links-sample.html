@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Favorite Links</title>
+
+  <style>
+    /* ==========================================================
+       Favorite links
+       ----------------------------------------------------------
+       BASE CLASSES
+         .card-1     big card, stacked vertically, large title
+         .card-2     medium card, in a grid inside a .card-1
+         .card-3     small card, inside a .card-2
+         .card-link  an individual link (put it on an <a>)
+
+       Titles are plain headings placed directly inside each card:
+         .card-1 > h2     .card-2 > h3     .card-3 > h4
+
+       MODIFIERS: add them next to a base class (work on all 4
+       base classes unless noted; combine as many as you like)
+
+         Color    blue green red orange yellow purple pink teal gray
+                  or "tint" plus style="--tint:#ff6600" for any color
+         Fill     solid       filled with the color, white text
+         Size     sm lg xl    scales the element's own text/padding
+                              (not the things inside it)
+         Layout   wide        spans 2 grid columns  (.card-2)
+                  full        spans all grid columns (.card-2)
+         Margin   mt-0 mt-1 mt-2 mt-3    margin-top    (0 / .5 / 1 / 2 rem)
+                  mb-0 mb-1 mb-2 mb-3    margin-bottom
+         Shadow   shadow      stronger drop shadow
+
+       Examples:
+         <div class="card-2 green wide"> ... </div>
+         <a class="card-link red solid lg" href="...">Link</a>
+         <a class="card-link tint" style="--tint:#ff6600" href="...">Link</a>
+       ========================================================== */
+
+    :root {
+      --page-bg: #f1f3f6;
+      --text: #1c1e21;
+      --muted: #5f6672;
+      --accent: #2563eb;          /* link color */
+      --accent-solid: #2563eb;    /* default fill color for .solid */
+
+      --card-1-bg: #ffffff;
+      --card-2-bg: #f6f7f9;
+      --card-3-bg: #ffffff;
+      --border: #dde1e8;
+
+      --radius: 14px;
+      --gap: 1rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page-bg: #111317;
+        --text: #e8eaed;
+        --muted: #9aa1ad;
+        --accent: #7aa7ff;
+
+        --card-1-bg: #1a1d23;
+        --card-2-bg: #22262e;
+        --card-3-bg: #2a2f38;
+        --border: #343a45;
+      }
+    }
+
+    /* Basic page setup (optional, remove if you already style these) */
+    body {
+      max-width: 1700px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.4;
+    }
+
+    /* ==========================================================
+       Per-element settings. Each element starts neutral (no tint)
+       and the modifiers further down change these values, so a
+       colored card never colors the cards inside it.
+         --tint   the color            --k       1 = tinted, 0 = not
+         --s      size scale           --tint-fg readable text version of the tint
+       ========================================================== */
+    .card-1, .card-2, .card-3, .card-link {
+      --tint: var(--accent-solid);
+      --tint-fg: color-mix(in srgb, var(--tint) 70%, var(--text));
+      --k: 0;
+      --bg-mix: 14%;
+      --border-mix: 45%;
+      --s: 1;
+    }
+
+    /* ---------- Level 1: big cards, stacked vertically ---------- */
+    .card-1 {
+      --surface: var(--card-1-bg);
+      display: grid;                                   /* its .card-2 children form a grid */
+      grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+      gap: var(--gap);
+      align-items: start;
+      margin-bottom: 1.75rem;                          /* vertical spacing between level-1 cards */
+      padding: calc(1.5rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+    }
+
+    .card-1 > h2 {
+      grid-column: 1 / -1;                             /* title spans the full width */
+      margin: 0 0 0.25rem;
+      font-size: calc(2rem * var(--s));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--text));
+    }
+
+    /* ---------- Level 2: medium cards, in a grid ---------- */
+    .card-2 {
+      --surface: var(--card-2-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: calc(1.1rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: var(--radius);
+    }
+
+    .card-2 > h3 {
+      margin: 0;
+      font-size: calc(1.25rem * var(--s));
+      font-weight: 600;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--text));
+    }
+
+    /* ---------- Level 3: small cards ---------- */
+    .card-3 {
+      --surface: var(--card-3-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: calc(0.75rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .card-3 > h4 {
+      margin: 0 0 0.3rem;
+      font-size: calc(0.8rem * var(--s));
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--muted));
+    }
+
+    /* ---------- Individual links ---------- */
+    .card-link {
+      --bg-mix: 10%;
+      display: block;
+      padding: calc(0.35rem * var(--s)) calc(0.5rem * var(--s));
+      border-radius: 8px;
+      font-size: calc(1rem * var(--s));
+      font-weight: calc(400 + var(--k) * 200);         /* tinted links are semi-bold */
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--accent));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), transparent);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      transition: background-color 0.15s ease;
+    }
+
+    .card-link:hover {
+      background: color-mix(in srgb, var(--tint) 20%, transparent);
+      text-decoration: underline;
+    }
+
+    .card-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ==========================================================
+       MODIFIERS (keep below the base classes)
+       ========================================================== */
+
+    /* ---------- Colors ---------- */
+    .blue   { --tint: #2563eb; --k: 1; }
+    .green  { --tint: #15803d; --k: 1; }
+    .red    { --tint: #dc2626; --k: 1; }
+    .orange { --tint: #c2410c; --k: 1; }
+    .yellow { --tint: #a16207; --k: 1; }
+    .purple { --tint: #7c3aed; --k: 1; }
+    .pink   { --tint: #db2777; --k: 1; }
+    .teal   { --tint: #0f766e; --k: 1; }
+    .gray   { --tint: #6b7280; --k: 1; }
+    .tint   { --k: 1; }                                /* use with style="--tint:#rrggbb" */
+
+    /* ---------- Solid fill (white text) ---------- */
+    .solid {
+      --k: 1;
+      --bg-mix: 100%;
+      --border-mix: 100%;
+    }
+
+    .solid > h2,
+    .solid > h3,
+    .solid > h4 {
+      color: #fff;
+    }
+
+    .card-link.solid {
+      color: #fff;
+    }
+
+    .card-link.solid:hover {
+      background: color-mix(in srgb, var(--tint) 85%, black);
+      text-decoration: none;
+    }
+
+    /* plain links inside a solid card turn white so they stay readable */
+    .solid > .card-link:not(.solid) {
+      color: #fff;
+    }
+
+    .solid > .card-link:not(.solid):hover {
+      background: rgb(255 255 255 / 0.2);
+    }
+
+    /* ---------- Sizes ---------- */
+    .sm { --s: 0.85; }
+    .lg { --s: 1.25; }
+    .xl { --s: 1.5; }
+
+    /* ---------- Grid layout (for .card-2 inside .card-1) ---------- */
+    .full { grid-column: 1 / -1; }
+
+    @media (min-width: 720px) {
+      .wide { grid-column: span 2; }
+    }
+
+    /* ---------- Margins ---------- */
+    .mt-0 { margin-top: 0; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 2rem; }
+
+    .mb-0 { margin-bottom: 0; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 2rem; }
+
+    /* ---------- Shadow ---------- */
+    .shadow {
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.22);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== Level 1: Development ===== -->
+  <div class="card-1">
+    <h2>Development</h2>
+
+    <div class="card-2 blue">
+      <h3>Frontend</h3>
+
+      <div class="card-3">
+        <h4>CSS</h4>
+        <a class="card-link" href="https://developer.mozilla.org/en-US/docs/Web/CSS">MDN: CSS</a>
+        <a class="card-link" href="https://css-tricks.com">CSS-Tricks</a>
+        <a class="card-link orange" href="https://caniuse.com">Can I use</a>
+      </div>
+
+      <div class="card-3">
+        <h4>JavaScript</h4>
+        <a class="card-link solid blue" href="https://javascript.info">javascript.info</a>
+        <a class="card-link" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">MDN: JavaScript</a>
+      </div>
+    </div>
+
+    <div class="card-2 green">
+      <h3>Backend</h3>
+
+      <div class="card-3 yellow">
+        <h4>Python</h4>
+        <a class="card-link" href="https://docs.python.org/3/">Python docs</a>
+        <a class="card-link" href="https://pypi.org">PyPI</a>
+      </div>
+
+      <div class="card-3">
+        <h4>Databases</h4>
+        <a class="card-link" href="https://www.postgresql.org/docs/">PostgreSQL docs</a>
+        <a class="card-link" href="https://sqlite.org/docs.html">SQLite docs</a>
+      </div>
+    </div>
+
+    <div class="card-2 purple shadow">
+      <h3>Tools</h3>
+
+      <div class="card-3">
+        <h4>Code &amp; Q&amp;A</h4>
+        <a class="card-link lg" href="https://github.com">GitHub</a>
+        <a class="card-link" href="https://stackoverflow.com">Stack Overflow</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Level 1: News & Reading (solid fill) ===== -->
+  <div class="card-1 solid teal">
+    <h2>News &amp; Reading</h2>
+
+    <div class="card-2">
+      <h3>Tech</h3>
+
+      <div class="card-3">
+        <h4>Aggregators</h4>
+        <a class="card-link" href="https://news.ycombinator.com">Hacker News</a>
+        <a class="card-link" href="https://lobste.rs">Lobsters</a>
+      </div>
+    </div>
+
+    <div class="card-2">
+      <h3>Reference</h3>
+
+      <div class="card-3">
+        <h4>Encyclopedias</h4>
+        <a class="card-link" href="https://www.wikipedia.org">Wikipedia</a>
+        <a class="card-link" href="https://www.britannica.com">Britannica</a>
+      </div>
+
+      <div class="card-3">
+        <h4>Dictionaries</h4>
+        <a class="card-link" href="https://www.merriam-webster.com">Merriam-Webster</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Level 1: Everyday (shadow, wide/full cards) ===== -->
+  <div class="card-1 shadow">
+    <h2>Everyday</h2>
+
+    <div class="card-2 orange">
+      <h3>Maps &amp; Travel</h3>
+
+      <div class="card-3">
+        <h4>Navigation</h4>
+        <a class="card-link" href="https://www.openstreetmap.org">OpenStreetMap</a>
+        <a class="card-link" href="https://maps.google.com">Google Maps</a>
+      </div>
+    </div>
+
+    <div class="card-2 pink wide">
+      <h3>Media (wide: spans 2 columns)</h3>
+
+      <div class="card-3">
+        <h4>Video</h4>
+        <a class="card-link" href="https://www.youtube.com">YouTube</a>
+      </div>
+
+      <div class="card-3">
+        <h4>Music</h4>
+        <a class="card-link" href="https://www.npr.org/music/">NPR Music</a>
+        <a class="card-link" href="https://bandcamp.com">Bandcamp</a>
+      </div>
+    </div>
+
+    <div class="card-2 full mt-1">
+      <h3>Full width (full: spans all columns)</h3>
+
+      <div class="card-3">
+        <h4>Weather</h4>
+        <a class="card-link" href="https://www.weather.gov">National Weather Service</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Level 1: Style demo (every modifier) ===== -->
+  <div class="card-1 gray">
+    <h2>Style demo</h2>
+
+    <div class="card-2">
+      <h3>Link colors</h3>
+
+      <div class="card-3">
+        <h4>card-link + color</h4>
+        <a class="card-link" href="#">plain</a>
+        <a class="card-link blue" href="#">blue</a>
+        <a class="card-link green" href="#">green</a>
+        <a class="card-link red" href="#">red</a>
+        <a class="card-link orange" href="#">orange</a>
+        <a class="card-link yellow" href="#">yellow</a>
+        <a class="card-link purple" href="#">purple</a>
+        <a class="card-link pink" href="#">pink</a>
+        <a class="card-link teal" href="#">teal</a>
+        <a class="card-link gray" href="#">gray</a>
+        <a class="card-link tint" style="--tint:#e11d8f" href="#">custom: tint + --tint</a>
+      </div>
+    </div>
+
+    <div class="card-2">
+      <h3>Link styles</h3>
+
+      <div class="card-3">
+        <h4>solid</h4>
+        <a class="card-link solid" href="#">solid</a>
+        <a class="card-link solid green" href="#">solid green</a>
+        <a class="card-link solid red" href="#">solid red</a>
+        <a class="card-link solid purple" href="#">solid purple</a>
+      </div>
+
+      <div class="card-3">
+        <h4>sm / lg / xl</h4>
+        <a class="card-link sm" href="#">sm</a>
+        <a class="card-link" href="#">normal</a>
+        <a class="card-link lg" href="#">lg</a>
+        <a class="card-link xl" href="#">xl</a>
+      </div>
+    </div>
+
+    <div class="card-2">
+      <h3>Card colors</h3>
+
+      <div class="card-3 blue">
+        <h4>card-3 blue</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+
+      <div class="card-3 red solid">
+        <h4>card-3 red solid</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+
+      <div class="card-3 green lg">
+        <h4>card-3 green lg</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+
+    <div class="card-2 solid purple">
+      <h3>card-2 purple solid</h3>
+
+      <div class="card-3 mt-2 shadow">
+        <h4>mt-2 + shadow</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+
+      <div class="card-3 sm">
+        <h4>card-3 sm</h4>
+        <a class="card-link" href="#">a link</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
