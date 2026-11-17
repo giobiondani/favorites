@@ -6,12 +6,14 @@
      .card-2     medium card, in a grid inside a .card-1
      .card-3     small card, inside a .card-2
      .card-link  an individual link (put it on an <a>)
+     .card-note  small, subtle overview text (put it on a <p>,
+                 inside any card, usually a .card-3)
 
    Titles are plain headings placed directly inside each card:
      .card-1 > h2     .card-2 > h3     .card-3 > h4
 
-   MODIFIERS: add them next to a base class (work on all 4
-   base classes unless noted; combine as many as you like)
+   MODIFIERS: add them next to a base class (work on all base
+   classes unless noted; combine as many as you like)
 
      Color    red rose pink magenta purple indigo blue sky cyan teal
               green lime yellow amber orange brown gray slate
@@ -30,6 +32,7 @@
      <div class="card-2 green wide"> ... </div>
      <a class="card-link red solid lg" href="...">Link</a>
      <a class="card-link tint" style="--tint:#ff6600" href="...">Link</a>
+     <p class="card-note">A short overview of what is in this card.</p>
    ========================================================== */
 
 :root {
@@ -82,7 +85,7 @@ body {
      --tint   the color            --k       1 = tinted, 0 = not
      --s      size scale           --tint-fg readable text version of the tint
    ========================================================== */
-.card-1, .card-2, .card-3, .card-link {
+.card-1, .card-2, .card-3, .card-link, .card-note {
   --tint: var(--accent-solid);
   --tint-fg: color-mix(in srgb, var(--tint) 70%, var(--text));
   --k: 0;
@@ -93,7 +96,7 @@ body {
 
 /* dark mode: lighten tinted text so every color keeps good contrast (WCAG AA) */
 @media (prefers-color-scheme: dark) {
-  .card-1, .card-2, .card-3, .card-link {
+  .card-1, .card-2, .card-3, .card-link, .card-note {
     --tint-fg: color-mix(in srgb, var(--tint) 45%, var(--text));
   }
 }
@@ -187,6 +190,25 @@ body {
   outline-offset: 2px;
 }
 
+/* ---------- Overview text (a <p> inside any card) ---------- */
+.card-note {
+  margin: 0 0 0.25rem;
+  padding: 0 calc(0.5rem * var(--s));              /* lines up with the link text */
+  font-size: calc(0.85rem * var(--s));             /* smaller than links (1rem) */
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--muted));
+  overflow-wrap: anywhere;
+}
+
+.card-1 > .card-note {
+  grid-column: 1 / -1;                             /* spans the whole card, like the title */
+}
+
+.card-1 > .card-note,
+.card-2 > .card-note {
+  padding-inline: 0;                               /* line up with the card's title instead */
+}
+
 /* ==========================================================
    MODIFIERS (keep below the base classes)
    ========================================================== */
@@ -241,6 +263,11 @@ body {
 
 .solid > .card-link:not(.solid):hover {
   background: rgb(255 255 255 / 0.2);
+}
+
+/* overview text inside a solid card turns white too */
+.solid > .card-note {
+  color: #fff;
 }
 
 /* ---------- Sizes ---------- */
