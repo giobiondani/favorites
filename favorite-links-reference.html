@@ -4,8 +4,309 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Favorite Links: Style Reference</title>
-  <link rel="stylesheet" href="favorite-links.css">
+
   <style>
+    /* ==========================================================
+       Favorite links
+       ----------------------------------------------------------
+       BASE CLASSES
+         .card-1     big card, stacked vertically, large title
+         .card-2     medium card, in a grid inside a .card-1
+         .card-3     small card, inside a .card-2
+         .card-link  an individual link (put it on an <a>)
+         .card-note  small, subtle overview text (put it on a <p>,
+                     inside any card, usually a .card-3)
+
+       Titles are plain headings placed directly inside each card:
+         .card-1 > h2     .card-2 > h3     .card-3 > h4
+
+       MODIFIERS: add them next to a base class (work on all base
+       classes unless noted; combine as many as you like)
+
+         Color    red rose pink magenta purple indigo blue sky cyan teal
+                  green lime yellow amber orange brown gray slate
+                  or "tint" plus style="--tint:#ff6600" for any color
+         Fill     solid       filled with the color, white text
+         Size     sm lg xl    scales the element's own text/padding
+                              (not the things inside it)
+         Layout   wide        spans 2 grid columns  (.card-2)
+                  full        spans all grid columns (.card-2)
+         Margin   mt-0 mt-1 mt-2 mt-3    margin-top    (0 / .5 / 1 / 2 rem)
+                  mb-0 mb-1 mb-2 mb-3    margin-bottom
+         Shadow   shadow-sm shadow shadow-lg    small / medium / large drop shadow
+                  shadow-none                   removes the shadow (card-1 has a faint one)
+
+       Examples:
+         <div class="card-2 green wide"> ... </div>
+         <a class="card-link red solid lg" href="...">Link</a>
+         <a class="card-link tint" style="--tint:#ff6600" href="...">Link</a>
+         <p class="card-note">A short overview of what is in this card.</p>
+       ========================================================== */
+
+    :root {
+      --page-bg: #f1f3f6;
+      --text: #1c1e21;
+      --muted: #5f6672;
+      --accent: #2563eb;          /* link color */
+      --accent-solid: #2563eb;    /* default fill color for .solid */
+
+      --card-1-bg: #ffffff;
+      --card-2-bg: #f6f7f9;
+      --card-3-bg: #ffffff;
+      --border: #dde1e8;
+
+      --radius: 14px;
+      --gap: 1rem;
+      --shadow-k: 1;              /* shadow strength (raised in dark mode) */
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page-bg: #111317;
+        --text: #e8eaed;
+        --muted: #9aa1ad;
+        --accent: #7aa7ff;
+
+        --card-1-bg: #1a1d23;
+        --card-2-bg: #22262e;
+        --card-3-bg: #2a2f38;
+        --border: #343a45;
+        --shadow-k: 2;
+      }
+    }
+
+    /* Basic page setup (optional, remove if you already style these) */
+    body {
+      max-width: 1700px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      background: var(--page-bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.4;
+    }
+
+    /* ==========================================================
+       Per-element settings. Each element starts neutral (no tint)
+       and the modifiers further down change these values, so a
+       colored card never colors the cards inside it.
+         --tint   the color            --k       1 = tinted, 0 = not
+         --s      size scale           --tint-fg readable text version of the tint
+       ========================================================== */
+    .card-1, .card-2, .card-3, .card-link, .card-note {
+      --tint: var(--accent-solid);
+      --tint-fg: color-mix(in srgb, var(--tint) 70%, var(--text));
+      --k: 0;
+      --bg-mix: 14%;
+      --border-mix: 45%;
+      --s: 1;
+    }
+
+    /* dark mode: lighten tinted text so every color keeps good contrast (WCAG AA) */
+    @media (prefers-color-scheme: dark) {
+      .card-1, .card-2, .card-3, .card-link, .card-note {
+        --tint-fg: color-mix(in srgb, var(--tint) 45%, var(--text));
+      }
+    }
+
+    /* ---------- Level 1: big cards, stacked vertically ---------- */
+    .card-1 {
+      --surface: var(--card-1-bg);
+      display: grid;                                   /* its .card-2 children form a grid */
+      grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+      gap: var(--gap);
+      align-items: start;
+      margin-bottom: 1.75rem;                          /* vertical spacing between level-1 cards */
+      padding: calc(1.5rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: calc(var(--radius) + 4px);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+    }
+
+    .card-1 > h2 {
+      grid-column: 1 / -1;                             /* title spans the full width */
+      margin: 0 0 0.25rem;
+      font-size: calc(2rem * var(--s));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--text));
+    }
+
+    /* ---------- Level 2: medium cards, in a grid ---------- */
+    .card-2 {
+      --surface: var(--card-2-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: calc(1.1rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: var(--radius);
+    }
+
+    .card-2 > h3 {
+      margin: 0;
+      font-size: calc(1.25rem * var(--s));
+      font-weight: 600;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--text));
+    }
+
+    /* ---------- Level 3: small cards ---------- */
+    .card-3 {
+      --surface: var(--card-3-bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      padding: calc(0.75rem * var(--s));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), var(--surface));
+      border: 1px solid color-mix(in srgb, var(--tint) calc(var(--k) * var(--border-mix)), var(--border));
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .card-3 > h4 {
+      margin: 0 0 0.3rem;
+      font-size: calc(0.8rem * var(--s));
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--muted));
+    }
+
+    /* ---------- Individual links ---------- */
+    .card-link {
+      --bg-mix: 10%;
+      display: block;
+      padding: calc(0.35rem * var(--s)) calc(0.5rem * var(--s));
+      border-radius: 8px;
+      font-size: calc(1rem * var(--s));
+      font-weight: calc(400 + var(--k) * 200);         /* tinted links are semi-bold */
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--accent));
+      background: color-mix(in srgb, var(--tint) calc(var(--k) * var(--bg-mix)), transparent);
+      text-decoration: none;
+      overflow-wrap: anywhere;
+      transition: background-color 0.15s ease;
+    }
+
+    .card-link:hover {
+      background: color-mix(in srgb, var(--tint) 20%, transparent);
+      text-decoration: underline;
+    }
+
+    .card-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* ---------- Overview text (a <p> inside any card) ---------- */
+    .card-note {
+      margin: 0 0 0.25rem;
+      padding: 0 calc(0.5rem * var(--s));              /* lines up with the link text */
+      font-size: calc(0.85rem * var(--s));             /* smaller than links (1rem) */
+      line-height: 1.4;
+      color: color-mix(in srgb, var(--tint-fg) calc(var(--k) * 100%), var(--muted));
+      overflow-wrap: anywhere;
+    }
+
+    .card-1 > .card-note {
+      grid-column: 1 / -1;                             /* spans the whole card, like the title */
+    }
+
+    .card-1 > .card-note,
+    .card-2 > .card-note {
+      padding-inline: 0;                               /* line up with the card's title instead */
+    }
+
+    /* ==========================================================
+       MODIFIERS (keep below the base classes)
+       ========================================================== */
+
+    /* ---------- Colors ---------- */
+    .red     { --tint: #dc2626; --k: 1; }
+    .rose    { --tint: #e11d48; --k: 1; }
+    .pink    { --tint: #db2777; --k: 1; }
+    .magenta { --tint: #a21caf; --k: 1; }
+    .purple  { --tint: #7c3aed; --k: 1; }
+    .indigo  { --tint: #4338ca; --k: 1; }
+    .blue    { --tint: #2563eb; --k: 1; }
+    .sky     { --tint: #0369a1; --k: 1; }
+    .cyan    { --tint: #0e7490; --k: 1; }
+    .teal    { --tint: #0f766e; --k: 1; }
+    .green   { --tint: #15803d; --k: 1; }
+    .lime    { --tint: #4d7c0f; --k: 1; }
+    .yellow  { --tint: #a16207; --k: 1; }
+    .amber   { --tint: #b45309; --k: 1; }
+    .orange  { --tint: #c2410c; --k: 1; }
+    .brown   { --tint: #78350f; --k: 1; }
+    .gray    { --tint: #6b7280; --k: 1; }
+    .slate   { --tint: #475569; --k: 1; }
+    .tint    { --k: 1; }                                /* use with style="--tint:#rrggbb" */
+
+    /* ---------- Solid fill (white text) ---------- */
+    .solid {
+      --k: 1;
+      --bg-mix: 100%;
+      --border-mix: 100%;
+    }
+
+    .solid > h2,
+    .solid > h3,
+    .solid > h4 {
+      color: #fff;
+    }
+
+    .card-link.solid {
+      color: #fff;
+    }
+
+    .card-link.solid:hover {
+      background: color-mix(in srgb, var(--tint) 85%, black);
+      text-decoration: none;
+    }
+
+    /* plain links inside a solid card turn white so they stay readable */
+    .solid > .card-link:not(.solid) {
+      color: #fff;
+    }
+
+    .solid > .card-link:not(.solid):hover {
+      background: rgb(255 255 255 / 0.2);
+    }
+
+    /* overview text inside a solid card turns white too */
+    .solid > .card-note {
+      color: #fff;
+    }
+
+    /* ---------- Sizes ---------- */
+    .sm { --s: 0.85; }
+    .lg { --s: 1.25; }
+    .xl { --s: 1.5; }
+
+    /* ---------- Grid layout (for .card-2 inside .card-1) ---------- */
+    .full { grid-column: 1 / -1; }
+
+    @media (min-width: 720px) {
+      .wide { grid-column: span 2; }
+    }
+
+    /* ---------- Margins ---------- */
+    .mt-0 { margin-top: 0; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 2rem; }
+
+    .mb-0 { margin-bottom: 0; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .mb-2 { margin-bottom: 1rem; }
+    .mb-3 { margin-bottom: 2rem; }
+
+    /* ---------- Shadows ---------- */
+    .shadow-none { box-shadow: none; }
+    .shadow-sm   { box-shadow: 0 2px 6px  rgb(0 0 0 / calc(0.12 * var(--shadow-k))); }
+    .shadow      { box-shadow: 0 8px 24px rgb(0 0 0 / calc(0.22 * var(--shadow-k))); }
+    .shadow-lg   { box-shadow: 0 18px 48px rgb(0 0 0 / calc(0.32 * var(--shadow-k))); }
+
     /* ==========================================================
        Reference-page-only styles (NOT part of favorite-links.css)
        ========================================================== */
@@ -50,7 +351,7 @@
     <h1>Favorite links: style reference</h1>
     <p>Every base class and modifier on one page. Each example is labeled with the classes it uses, so you can copy them straight into your own cards and links. Colors follow your system's light or dark setting.</p>
     <nav class="ref-nav">
-      <a class="card-link" href="#how">How it works</a><a class="card-link" href="#colors">Colors</a><a class="card-link" href="#custom">Any color</a><a class="card-link" href="#sizes">Sizes</a><a class="card-link" href="#shadows">Shadows</a><a class="card-link" href="#margins">Margins</a><a class="card-link" href="#grid-margins">Margins in a grid</a><a class="card-link" href="#layout">Grid span</a><a class="card-link" href="#card1">card-1 variants</a>
+      <a class="card-link" href="#how">How it works</a><a class="card-link" href="#notes">Overview text</a><a class="card-link" href="#colors">Colors</a><a class="card-link" href="#custom">Any color</a><a class="card-link" href="#sizes">Sizes</a><a class="card-link" href="#shadows">Shadows</a><a class="card-link" href="#margins">Margins</a><a class="card-link" href="#grid-margins">Margins in a grid</a><a class="card-link" href="#layout">Grid span</a><a class="card-link" href="#card1">card-1 variants</a>
     </nav>
   </header>
 
@@ -66,6 +367,7 @@
         <p class="ref-note"><code>card-2</code> Medium card in a grid inside a card-1. Title is an <code>&lt;h3&gt;</code>.</p>
         <p class="ref-note"><code>card-3</code> Small card inside a card-2. Title is an <code>&lt;h4&gt;</code>.</p>
         <p class="ref-note"><code>card-link</code> One link. Goes on an <code>&lt;a&gt;</code>.</p>
+        <p class="ref-note"><code>card-note</code> Small, subtle overview text. Goes on a <code>&lt;p&gt;</code>.</p>
       </div>
     </div>
 
@@ -100,6 +402,65 @@
         <h4>News</h4>
         <a class="card-link" href="#">Hacker News</a>
         <a class="card-link solid red lg" href="#">Lobsters</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-1" id="notes">
+    <h2>Overview text</h2>
+    <p class="ref-note"><code>card-note</code> goes on a <code>&lt;p&gt;</code> inside any card, usually a card-3 right under its title. It is smaller (0.85rem) and more muted than the links. Size, color and margin modifiers work on it too.</p>
+    <div class="card-2">
+      <h3>Links only</h3>
+      <div class="card-3">
+        <h4>CSS</h4>
+        <a class="card-link" href="#">MDN: CSS</a>
+        <a class="card-link" href="#">CSS-Tricks</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>With card-note</h3>
+      <div class="card-3">
+        <h4>CSS</h4>
+        <p class="card-note">Docs and references I check most often.</p>
+        <a class="card-link" href="#">MDN: CSS</a>
+        <a class="card-link" href="#">CSS-Tricks</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>Longer text</h3>
+      <div class="card-3">
+        <h4>CSS</h4>
+        <p class="card-note">A longer overview wraps onto several lines and stays out of the way. It is smaller and quieter than the links below it, so the links remain the main thing you notice.</p>
+        <a class="card-link" href="#">MDN: CSS</a>
+        <a class="card-link" href="#">CSS-Tricks</a>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>Sizes</h3>
+      <div class="card-3">
+        <h4>sm, normal, lg</h4>
+        <p class="card-note sm">sm: small overview text</p>
+        <p class="card-note">Normal overview text</p>
+        <p class="card-note lg">lg: large overview text</p>
+      </div>
+    </div>
+    <div class="card-2">
+      <h3>Colors</h3>
+      <div class="card-3">
+        <h4>card-note + color</h4>
+        <p class="card-note blue">blue</p>
+        <p class="card-note green">green</p>
+        <p class="card-note red">red</p>
+        <p class="card-note purple">purple</p>
+        <p class="card-note tint" style="--tint:#ff6600">tint: any color</p>
+      </div>
+    </div>
+    <div class="card-2 solid teal">
+      <h3>card-2 solid teal</h3>
+      <p class="card-note">A note placed directly in a solid card turns white.</p><div class="card-3">
+        <h4>Inside a plain card-3</h4>
+        <p class="card-note">Here it stays muted.</p>
+        <a class="card-link" href="#">a link</a>
       </div>
     </div>
   </div>
@@ -614,10 +975,12 @@
 
   <div class="card-1 teal" id="card1">
     <h2>card-1 teal</h2>
+    <p class="card-note">A card-note placed directly in a card-1 spans the full width under the title.</p>
     <div class="card-2">
       <h3>Frontend</h3>
       <div class="card-3">
         <h4>CSS</h4>
+        <p class="card-note">References and browser support.</p>
         <a class="card-link" href="#">MDN: CSS</a>
         <a class="card-link" href="#">CSS-Tricks</a>
       </div><div class="card-3">
@@ -637,10 +1000,12 @@
 
   <div class="card-1 solid indigo">
     <h2>card-1 solid indigo</h2>
+    <p class="card-note">On a solid card-1 the note turns white.</p>
     <div class="card-2">
       <h3>Frontend</h3>
       <div class="card-3">
         <h4>CSS</h4>
+        <p class="card-note">References and browser support.</p>
         <a class="card-link" href="#">MDN: CSS</a>
         <a class="card-link" href="#">CSS-Tricks</a>
       </div><div class="card-3">
@@ -660,10 +1025,12 @@
 
   <div class="card-1 lg orange shadow-lg">
     <h2>card-1 lg orange shadow-lg</h2>
+    
     <div class="card-2">
       <h3>Frontend</h3>
       <div class="card-3">
         <h4>CSS</h4>
+        <p class="card-note">References and browser support.</p>
         <a class="card-link" href="#">MDN: CSS</a>
         <a class="card-link" href="#">CSS-Tricks</a>
       </div><div class="card-3">
